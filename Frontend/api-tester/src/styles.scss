@@ -1,0 +1,86 @@
+@import 'bootstrap/dist/css/bootstrap.min.css';
+@import '@fortawesome/fontawesome-free/css/all.min.css';
+
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #f8f9fa;
+}
+
+/* Common styles */
+.header-row {
+  align-items: center;
+}
+
+.card {
+  margin-bottom: 1.5rem;
+  border-radius: 0.25rem;
+  box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+}
+
+.card-header {
+  background-color: #f8f9fa;
+}
+
+/* Tab styling */
+.nav-tabs .nav-link {
+    color: #495057;
+    cursor: pointer;
+  }
+  
+  .nav-tabs .nav-link.active {
+    color: #007bff;
+    font-weight: 500;
+  }
+  
+  /* Code and JSON styling */
+  pre {
+    background-color: #f5f5f5;
+    border-radius: 4px;
+    padding: 10px;
+    margin: 0;
+  }
+  
+  code {
+    font-family: 'Consolas', 'Courier New', monospace;
+    font-size: 0.9rem;
+  }
+  
+  /* Response status badges */
+  .badge {
+    font-size: 85%;
+    font-weight: 500;
+  }
+  
+  /* Form styling */
+  .form-control {
+    border-radius: 0.25rem;
+  }
+  
+  .form-control:focus {
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+  }
+  
+  /* Monaco editor customizations */
+  .monaco-editor-container {
+    min-height: 200px;
+    border: 1px solid #ced4da;
+    border-radius: 0.25rem;
+  }
+  
+  /* Animations */
+  .fade-in {
+    animation: fadeIn 0.3s ease-in;
+  }
+  
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  
+  /* Responsive adjustments */
+  @media (max-width: 768px) {
+    .container {
+      padding-left: 10px;
+      padding-right: 10px;
+    }
+  }

@@ -1,0 +1,11 @@
+{
+  "Version": 1,
+  "Hash": "e4aCellKyJulZmk708aZunLF3dCmRn4LtIKLhS+npOI=",
+  "Source": "ApiTester.Api",
+  "BasePath": "_content/ApiTester.Api",
+  "Mode": "Default",
+  "ManifestType": "Build",
+  "ReferencedProjectsConfiguration": [],
+  "DiscoveryPatterns": [],
+  "Assets": []
+}

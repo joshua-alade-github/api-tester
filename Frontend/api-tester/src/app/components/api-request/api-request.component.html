@@ -1,0 +1,161 @@
+<div class="card">
+  <div class="card-header">
+    <ul class="nav nav-tabs card-header-tabs" id="requestTabs">
+      <li class="nav-item">
+        <a class="nav-link" [class.active]="activeTab === 'request'" (click)="setActiveTab('request', $event)">Request</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" [class.active]="activeTab === 'headers'" (click)="setActiveTab('headers', $event)">Headers</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" [class.active]="activeTab === 'auth'" (click)="setActiveTab('auth', $event)">Auth</a>
+      </li>
+    </ul>
+  </div>
+  <div class="card-body">
+    <form [formGroup]="requestForm">
+      <div class="tab-content" id="requestTabsContent">
+        <!-- Request Tab -->
+        <div class="tab-pane fade" [class.show]="activeTab === 'request'" [class.active]="activeTab === 'request'" id="request" role="tabpanel">
+          <div class="form-group">
+            <label for="url">URL</label>
+            <input type="text" id="url" class="form-control" formControlName="url" placeholder="https://api.example.com/endpoint" />
+            <div *ngIf="requestForm?.get('url')?.touched && requestForm?.get('url')?.errors?.['required']" class="text-danger">
+              URL is required
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group col-md-6">
+              <label for="method">HTTP Method</label>
+              <select class="form-control" id="method" formControlName="method">
+                <option *ngFor="let method of httpMethods" [value]="method">{{ method }}</option>
+              </select>
+            </div>
+            <div class="form-group col-md-6">
+              <label for="contentType">Content Type</label>
+              <select class="form-control" id="contentType" formControlName="contentType">
+                <option *ngFor="let type of contentTypes" [value]="type">{{ type }}</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="requestBody">Request Body</label>
+            <div class="d-flex mb-2">
+              <button type="button" class="btn btn-sm btn-outline-secondary ml-auto" (click)="formatJson()">
+                Format JSON
+              </button>
+            </div>
+            <textarea id="requestBody" class="form-control code-editor" rows="8" formControlName="requestBody"></textarea>
+          </div>
+          <div class="form-group">
+            <label for="timeoutSeconds">Timeout (seconds)</label>
+            <input type="number" id="timeoutSeconds" class="form-control" formControlName="timeoutSeconds" min="1" max="300" />
+            <div *ngIf="requestForm?.get('timeoutSeconds')?.touched && requestForm?.get('timeoutSeconds')?.errors" class="text-danger">
+              <span *ngIf="requestForm?.get('timeoutSeconds')?.errors?.['required']">Timeout is required</span>
+              <span *ngIf="requestForm?.get('timeoutSeconds')?.errors?.['min'] || requestForm?.get('timeoutSeconds')?.errors?.['max']">
+                Timeout must be between 1 and 300 seconds
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Headers Tab -->
+        <div class="tab-pane fade" [class.show]="activeTab === 'headers'" [class.active]="activeTab === 'headers'" id="headers" role="tabpanel">
+          <div formArrayName="headers">
+            <div *ngFor="let header of headersArray.controls; let i = index" [formGroupName]="i" class="form-row header-row mb-2">
+              <div class="col-md-5">
+                <input type="text" class="form-control" formControlName="key" placeholder="Header Name" />
+              </div>
+              <div class="col-md-5">
+                <input type="text" class="form-control" formControlName="value" placeholder="Value" />
+              </div>
+              <div class="col-md-2">
+                <button type="button" class="btn btn-danger" (click)="removeHeader(i)">
+                  <i class="fa fa-trash"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+          <button type="button" class="btn btn-sm btn-primary mt-2" (click)="addHeader()">
+            <i class="fa fa-plus"></i> Add Header
+          </button>
+        </div>
+
+        <!-- Auth Tab -->
+        <div class="tab-pane fade" [class.show]="activeTab === 'auth'" [class.active]="activeTab === 'auth'" id="auth" role="tabpanel">
+          <div class="form-group">
+            <label for="authType">Authentication Type</label>
+            <select class="form-control" id="authType" formControlName="authType" (change)="onAuthTypeChange($event)">
+              <option *ngFor="let type of authTypes" [value]="type">{{ type }}</option>
+            </select>
+          </div>
+
+          <!-- Basic Auth -->
+          <div *ngIf="requestForm?.get('authType')?.value === 'Basic'" formGroupName="basicAuth">
+            <div class="form-group">
+              <label for="username">Username</label>
+              <input type="text" id="username" class="form-control" formControlName="username" />
+            </div>
+            <div class="form-group">
+              <label for="password">Password</label>
+              <input type="password" id="password" class="form-control" formControlName="password" />
+            </div>
+          </div>
+
+          <!-- Bearer Auth -->
+          <div *ngIf="requestForm?.get('authType')?.value === 'Bearer'" formGroupName="bearerAuth">
+            <div class="form-group">
+              <label for="token">Bearer Token</label>
+              <input type="text" id="token" class="form-control" formControlName="token" />
+            </div>
+          </div>
+
+          <!-- API Key Auth -->
+          <div *ngIf="requestForm?.get('authType')?.value === 'ApiKey'" formGroupName="apiKeyAuth">
+            <div class="form-group">
+              <label for="apiKeyName">API Key Name</label>
+              <input type="text" id="apiKeyName" class="form-control" formControlName="name" placeholder="X-API-Key" />
+            </div>
+            <div class="form-group">
+              <label for="apiKeyValue">API Key Value</label>
+              <input type="text" id="apiKeyValue" class="form-control" formControlName="value" />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="mt-3">
+        <button type="button" class="btn btn-primary" (click)="sendRequest()" [disabled]="isLoading">
+          <i class="fa fa-paper-plane"></i> 
+          <span *ngIf="!isLoading">Send Request</span>
+          <span *ngIf="isLoading">Sending...</span>
+        </button>
+        <button type="button" class="btn btn-info ml-2" *ngIf="isAuthenticated" (click)="toggleSaveForm()">
+          <i class="fa fa-save"></i> Save
+        </button>
+        <button type="button" class="btn btn-secondary ml-2" (click)="resetForm()">
+          <i class="fa fa-undo"></i> Reset
+        </button>
+      </div>
+    </form>
+    <div class="mt-3" *ngIf="showSaveForm">
+      <div class="card">
+        <div class="card-header">Save Request</div>
+        <div class="card-body">
+          <div class="form-group">
+            <label for="requestName">Name *</label>
+            <input type="text" id="requestName" class="form-control" [(ngModel)]="requestName" name="requestName" required />
+          </div>
+          <div class="form-group mt-2">
+            <label for="requestDescription">Description</label>
+            <textarea id="requestDescription" class="form-control" [(ngModel)]="requestDescription" name="requestDescription" rows="2"></textarea>
+          </div>
+          <div class="mt-3">
+            <button type="button" class="btn btn-primary" (click)="saveRequest()">Save</button>
+            <button type="button" class="btn btn-secondary ml-2" (click)="showSaveForm = false">Cancel</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,91 @@
+<div class="card" *ngIf="response">
+  <div class="card-header">
+    <ul class="nav nav-tabs card-header-tabs">
+      <li class="nav-item">
+        <a class="nav-link" [class.active]="activeTab === 'response'" (click)="setActiveTab('response')">
+          Response
+          <span class="badge ml-1" [ngClass]="getStatusClass()">{{ response.statusCode }}</span>
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" [class.active]="activeTab === 'headers'" (click)="setActiveTab('headers')">Headers</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" [class.active]="activeTab === 'info'" (click)="setActiveTab('info')">Info</a>
+      </li>
+    </ul>
+  </div>
+  <div class="card-body">
+    <div [ngSwitch]="activeTab">
+      <!-- Response Body Tab -->
+      <div *ngSwitchCase="'response'">
+        <div class="d-flex justify-content-between mb-2">
+          <strong>Response Body</strong>
+          <button type="button" class="btn btn-sm btn-outline-secondary" (click)="copyToClipboard()">
+            <i class="fa fa-copy"></i> Copy
+          </button>
+        </div>
+        <div *ngIf="response?.error" class="alert alert-danger">
+          {{ response.error }}
+        </div>
+        <div *ngIf="!response?.error">
+          <pre class="bg-light p-3 border rounded" style="height: 400px; overflow: auto;">{{ response.isValidJson ? response.formattedBody : response.body }}</pre>
+        </div>
+      </div>
+
+      <!-- Headers Tab -->
+      <div *ngSwitchCase="'headers'">
+        <strong>Response Headers</strong>
+        <table class="table table-sm table-striped mt-2" *ngIf="response.headers && (response.headers | keyvalue).length">
+          <thead>
+            <tr>
+              <th>Header</th>
+              <th>Value</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let header of response.headers | keyvalue">
+              <td>{{ header.key }}</td>
+              <td>{{ header.value }}</td>
+            </tr>
+          </tbody>
+        </table>
+        <p *ngIf="!response.headers || !(response.headers | keyvalue).length" class="text-muted">No headers available</p>
+      </div>
+
+      <!-- Info Tab -->
+      <div *ngSwitchCase="'info'">
+        <strong>Response Information</strong>
+        <table class="table table-sm mt-2">
+          <tbody>
+            <tr>
+              <th>Status</th>
+              <td>
+                <span class="badge mr-2" [ngClass]="getStatusClass()">{{ response.statusCode }}</span>
+                {{ getStatusText() }}
+              </td>
+            </tr>
+            <tr>
+              <th>Response Time</th>
+              <td>{{ response.responseTimeMs }} ms</td>
+            </tr>
+            <tr>
+              <th>Content Type</th>
+              <td>{{ response.contentType || 'Not specified' }}</td>
+            </tr>
+            <tr>
+              <th>Size</th>
+              <td>{{ response.body.length || 0 }} bytes</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="card" *ngIf="!response">
+  <div class="card-body text-center p-5">
+    <p class="text-muted">Send a request to see the response here</p>
+  </div>
+</div>

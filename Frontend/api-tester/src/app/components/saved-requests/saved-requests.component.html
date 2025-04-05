@@ -1,0 +1,35 @@
+<div class="card">
+  <div class="card-header">
+    <h5>Saved Requests</h5>
+  </div>
+  <div class="card-body">
+    <div *ngIf="isLoading" class="text-center p-3">
+      <div class="spinner-border text-primary"></div>
+    </div>
+    
+    <div *ngIf="!isLoading && savedRequests.length === 0" class="text-center p-3">
+      <p class="text-muted">No saved requests found</p>
+    </div>
+    
+    <div *ngIf="!isLoading && savedRequests.length > 0">
+      <div class="list-group">
+        <div *ngFor="let request of savedRequests" class="list-group-item list-group-item-action">
+          <div class="d-flex w-100 justify-content-between">
+            <h5 class="mb-1">{{ request.name }}</h5>
+            <small>{{ request.created | date:'medium' }}</small>
+          </div>
+          <p class="mb-1">{{ request.description || 'No description' }}</p>
+          <small>{{ request.request.url }}</small>
+          <div class="mt-2">
+            <button class="btn btn-sm btn-primary me-2" (click)="onLoadRequest(request)">
+              Load
+            </button>
+            <button class="btn btn-sm btn-danger" (click)="onDeleteRequest(request.id)">
+              Delete
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

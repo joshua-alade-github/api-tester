@@ -1,0 +1,11 @@
+{
+  "Version": 1,
+  "Hash": "QrJ2UgeQFv8qZC3MuMF1UhjgDoZSbch1qajE+PA3/Ik=",
+  "Source": "ApiTester.Api",
+  "BasePath": "_content/ApiTester.Api",
+  "Mode": "Default",
+  "ManifestType": "Publish",
+  "ReferencedProjectsConfiguration": [],
+  "DiscoveryPatterns": [],
+  "Assets": []
+}
