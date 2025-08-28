@@ -38,11 +38,30 @@ builder.WebHost.UseUrls($"http://+:{port}");
 
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowAngular", builder =>
+    options.AddPolicy("AllowAngular", policy =>
     {
-        builder.AllowAnyOrigin()
-               .AllowAnyMethod()
-               .AllowAnyHeader();
+        // In production
+        if (builder.Environment.IsProduction())
+        {
+            policy.WithOrigins(
+                    "https://api-tester.vercel.app",
+                    "https://*.vercel.app"
+                )
+                .AllowAnyMethod()
+                .AllowAnyHeader()
+                .AllowCredentials();
+        }
+        else
+        {
+            // Development - allow localhost
+            policy.WithOrigins(
+                    "http://localhost:4200",
+                    "http://localhost:*"
+                )
+                .AllowAnyMethod()
+                .AllowAnyHeader()
+                .AllowCredentials();
+        }
     });
 });
 
@@ -54,7 +73,6 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseHttpsRedirection();
 app.UseCors("AllowAngular");
 
 app.UseAuthentication();
