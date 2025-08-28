@@ -40,28 +40,17 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAngular", policy =>
     {
-        // In production
-        if (builder.Environment.IsProduction())
-        {
-            policy.WithOrigins(
-                    "https://api-tester.vercel.app",
-                    "https://*.vercel.app"
-                )
-                .AllowAnyMethod()
-                .AllowAnyHeader()
-                .AllowCredentials();
-        }
-        else
-        {
-            // Development - allow localhost
-            policy.WithOrigins(
-                    "http://localhost:4200",
-                    "http://localhost:*"
-                )
-                .AllowAnyMethod()
-                .AllowAnyHeader()
-                .AllowCredentials();
-        }
+        policy.SetIsOriginAllowed(origin =>
+            {
+                if (origin.StartsWith("http://localhost")) return true;
+
+                if (origin.Contains(".vercel.app")) return true;
+
+                return false;
+            })
+            .AllowAnyMethod()
+            .AllowAnyHeader()
+            .AllowCredentials();
     });
 });
 
