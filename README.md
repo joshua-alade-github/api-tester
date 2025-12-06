@@ -273,16 +273,6 @@ ENTRYPOINT ["dotnet", "ApiTester.Api.dll"]
 4. Push to the branch (`git push origin feature/amazing-feature`)
 5. Open a Pull Request
 
-## Roadmap
-
-- [ ] Request history
-- [ ] Collections/folders for organising requests
-- [ ] Environment variables
-- [ ] Import/export requests (Postman format)
-- [ ] WebSocket support
-- [ ] GraphQL support
-- [ ] Response comparison
-
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
