@@ -40,14 +40,11 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAngular", policy =>
     {
-        policy.SetIsOriginAllowed(origin =>
-            {
-                if (origin.StartsWith("http://localhost")) return true;
-
-                if (origin.Contains(".vercel.app")) return true;
-
-                return false;
-            })
+        policy
+            .WithOrigins(
+                "https://api-tester-nu.vercel.app",
+                "http://localhost:4200"
+            )
             .AllowAnyMethod()
             .AllowAnyHeader()
             .AllowCredentials();
